@@ -20,18 +20,18 @@ export function NotificationButton() {
     setPermission(result);
 
     if (result === "granted") {
-      const message = "TurfPro notifications enabled. You'll see booking alerts and updates.";
+      const message = "Sports spitch notifications enabled. You'll see booking alerts and updates.";
       if (navigator.serviceWorker) {
         const registration = await navigator.serviceWorker.getRegistration();
         if (registration?.showNotification) {
-          registration.showNotification("TurfPro enabled", {
+          registration.showNotification("Sports spitch enabled", {
             body: message,
             icon: "/icon-192.png",
           });
           return;
         }
       }
-      new Notification("TurfPro enabled", { body: message, icon: "/icon-192.png" });
+      new Notification("Sports spitch enabled", { body: message, icon: "/icon-192.png" });
     }
   };
 

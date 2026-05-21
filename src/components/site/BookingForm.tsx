@@ -136,33 +136,46 @@ Booking ID: ${result.booking?.id || 'Pending'}`;
       
       console.log("WhatsApp URL:", whatsappUrl);
       
-      // Try to open WhatsApp
-      try {
-        const newWindow = window.open(whatsappUrl, "_blank");
-        if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-          console.log("Popup blocked, opening in same tab");
-          window.location.href = whatsappUrl;
-        } else {
-          console.log("WhatsApp opened in new tab");
-        }
-      } catch (error) {
-        console.error("Error opening WhatsApp:", error);
+      // Mobile detection and direct redirect for better mobile support
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        // For mobile devices, use direct location change to avoid popup blockers
+        console.log("Mobile device detected, using direct redirect");
         window.location.href = whatsappUrl;
+      } else {
+        // For desktop, try window.open first, fallback to direct redirect
+        try {
+          const newWindow = window.open(whatsappUrl, "_blank");
+          if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+            console.log("Popup blocked, using direct redirect");
+            window.location.href = whatsappUrl;
+          } else {
+            console.log("WhatsApp opened in new tab");
+          }
+        } catch (error) {
+          console.error("Error opening WhatsApp:", error);
+          window.location.href = whatsappUrl;
+        }
       }
       
-      // Show success message
-      alert("Booking submitted successfully! WhatsApp should open shortly.");
+      // Show success message (only for desktop, as mobile redirects)
+      if (!isMobile) {
+        alert("Booking submitted successfully! WhatsApp should open shortly.");
+      }
       
-      // Close dialog and reset form
-      setOpen(false);
-      setFormData({
-        name: "",
-        phone: "",
-        game: "",
-        date: "",
-        timeSlot: "",
-        players: ""
-      });
+      // Close dialog and reset form (only for desktop)
+      if (!isMobile) {
+        setOpen(false);
+        setFormData({
+          name: "",
+          phone: "",
+          game: "",
+          date: "",
+          timeSlot: "",
+          players: ""
+        });
+      }
 
     } catch (error) {
       console.error("Network or parsing error:", error);

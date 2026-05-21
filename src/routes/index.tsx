@@ -9,13 +9,13 @@ import { WhatsAppButton } from "@/components/site/WhatsAppButton";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "TurfPro — Book Sports Turfs in Tamil Nadu" },
+      { title: "Sports spitch — Book Sports Turfs in Tamil Nadu" },
       {
         name: "description",
         content:
           "Book premium cricket, football and box cricket turfs across Tamil Nadu in seconds. Real-time slot availability, instant confirmation.",
       },
-      { property: "og:title", content: "TurfPro — Book Sports Turfs in Tamil Nadu" },
+      { property: "og:title", content: "Sports spitch — Book Sports Turfs in Tamil Nadu" },
       {
         property: "og:description",
         content: "Real-time turf booking for cricket, football & more across Tamil Nadu.",

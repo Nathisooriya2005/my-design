@@ -1,6 +1,6 @@
 export function WhatsAppButton() {
   const phone = "918883921424";
-  const text = encodeURIComponent("Hi TurfPro! I'd like to book a turf.");
+  const text = encodeURIComponent("Hi Sports spitch! I'd like to book a turf.");
   return (
     <a
       href={`https://wa.me/${phone}?text=${text}`}
