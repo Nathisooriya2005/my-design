@@ -42,7 +42,7 @@ export function BookingForm() {
     return "morning"; // Fallback
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     console.log("Form submitted with data:", formData);
@@ -53,86 +53,127 @@ export function BookingForm() {
       alert("Please fill in all required fields");
       return;
     }
-    
-    const batch = getBatch(formData.timeSlot);
-    const displayBatch = batch.charAt(0).toUpperCase() + batch.slice(1);
-    
-    console.log("Batch determined:", batch, "Display:", displayBatch);
-    
-    // Ensure batch is a valid TimeBatch value
-    const validBatch: TimeBatch = (
-      batch === "morning" || batch === "afternoon" || batch === "evening" || batch === "night"
-        ? batch
-        : "morning"
-    );
-    
-    console.log("Valid batch:", validBatch);
-    
-    // Save booking to store
-    try {
-      addBooking({
-        name: formData.name,
-        phone: formData.phone,
-        turf: formData.game, // Using game name as turf for simplicity
-        sport: formData.game,
-        datetime: new Date(`${formData.date}T${formData.timeSlot.split('-')[0]}:00:00`).toISOString(),
-        players: parseInt(formData.players),
-        price: 500, // Default price, can be adjusted based on game
-        batch: validBatch,
-        preferredLocation: "Chennimalai",
-        dealNotes: `Time slot: ${formData.timeSlot}`,
-      });
-      console.log("Booking saved successfully");
-    } catch (error) {
-      console.error("Error saving booking:", error);
-      alert("Error saving booking. Please try again.");
-      return;
+
+    // Set loading state
+    const submitButton = e.currentTarget.querySelector('button[type="submit"]') as HTMLButtonElement;
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Processing...";
     }
-    
-    // Send WhatsApp message
-    const message = `New Booking Request:
+
+    try {
+      // Call API route
+      console.log("Submitting booking to API...");
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      console.log("API Response status:", response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("API Error:", errorData);
+        
+        // Show specific error message from API
+        const errorMessage = errorData.details || errorData.error || "Failed to submit booking";
+        alert(`Booking Error: ${errorMessage}`);
+        return;
+      }
+
+      const result = await response.json();
+      console.log("API Success:", result);
+
+      // Also save to local store for client-side functionality
+      const batch = getBatch(formData.timeSlot);
+      const displayBatch = batch.charAt(0).toUpperCase() + batch.slice(1);
+      
+      // Ensure batch is a valid TimeBatch value
+      const validBatch: TimeBatch = (
+        batch === "morning" || batch === "afternoon" || batch === "evening" || batch === "night"
+          ? batch
+          : "morning"
+      );
+      
+      try {
+        addBooking({
+          name: formData.name,
+          phone: formData.phone,
+          turf: formData.game,
+          sport: formData.game,
+          datetime: new Date(`${formData.date}T${formData.timeSlot.split('-')[0]}:00:00`).toISOString(),
+          players: parseInt(formData.players),
+          price: 500,
+          batch: validBatch,
+          preferredLocation: "Chennimalai",
+          dealNotes: `Time slot: ${formData.timeSlot}`,
+        });
+        console.log("Booking also saved to local store");
+      } catch (storeError) {
+        console.warn("Failed to save to local store (non-critical):", storeError);
+        // Continue anyway since API call succeeded
+      }
+
+      // Send WhatsApp message
+      const message = `New Booking Request:
 Name: ${formData.name}
 Phone: ${formData.phone}
 Game: ${formData.game}
 Date: ${formData.date}
 Time: ${formData.timeSlot}
 Batch: ${displayBatch}
-Players: ${formData.players}`;
+Players: ${formData.players}
 
-    console.log("WhatsApp message:", message);
-    
-    // Try the phone number without country code first
-    const phoneNumber = "8883921424"; // Original number provided
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    
-    console.log("WhatsApp URL:", whatsappUrl);
-    
-    // Try to open WhatsApp, with fallback for popup blockers
-    try {
-      const newWindow = window.open(whatsappUrl, "_blank");
-      if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-        // If popup blocked, open in same tab
-        console.log("Popup blocked, opening in same tab");
+Booking ID: ${result.booking?.id || 'Pending'}`;
+
+      console.log("WhatsApp message:", message);
+      
+      const phoneNumber = "8883921424";
+      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+      
+      console.log("WhatsApp URL:", whatsappUrl);
+      
+      // Try to open WhatsApp
+      try {
+        const newWindow = window.open(whatsappUrl, "_blank");
+        if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+          console.log("Popup blocked, opening in same tab");
+          window.location.href = whatsappUrl;
+        } else {
+          console.log("WhatsApp opened in new tab");
+        }
+      } catch (error) {
+        console.error("Error opening WhatsApp:", error);
         window.location.href = whatsappUrl;
-      } else {
-        console.log("WhatsApp opened in new tab");
       }
+      
+      // Show success message
+      alert("Booking submitted successfully! WhatsApp should open shortly.");
+      
+      // Close dialog and reset form
+      setOpen(false);
+      setFormData({
+        name: "",
+        phone: "",
+        game: "",
+        date: "",
+        timeSlot: "",
+        players: ""
+      });
+
     } catch (error) {
-      console.error("Error opening WhatsApp:", error);
-      // Fallback: try direct location change
-      window.location.href = whatsappUrl;
+      console.error("Network or parsing error:", error);
+      alert("Network error: Unable to connect to server. Please check your internet connection and try again.");
+    } finally {
+      // Re-enable submit button
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = "Book Now";
+      }
     }
-    
-    // Close dialog and reset form
-    setOpen(false);
-    setFormData({
-      name: "",
-      phone: "",
-      game: "",
-      date: "",
-      timeSlot: "",
-      players: ""
-    });
   };
 
   return (
@@ -231,6 +272,7 @@ Players: ${formData.players}`;
               required
               type="number"
               min="1"
+              max="20"
               value={formData.players}
               onChange={(e) => setFormData({ ...formData, players: e.target.value })}
               placeholder="Enter number of players"
@@ -238,21 +280,7 @@ Players: ${formData.players}`;
           </div>
 
           <Button type="submit" className="w-full bg-gradient-to-r from-primary to-primary-glow text-primary-foreground font-semibold shadow-[var(--shadow-glow)] hover:opacity-90 transition">
-            Submit & Send to WhatsApp
-          </Button>
-          
-          {/* Test button for debugging */}
-          <Button 
-            type="button" 
-            onClick={() => {
-              const testMessage = "Test message from booking form";
-              const testUrl = `https://wa.me/8883921424?text=${encodeURIComponent(testMessage)}`;
-              console.log("Test WhatsApp URL:", testUrl);
-              window.open(testUrl, "_blank");
-            }}
-            className="w-full bg-secondary text-secondary-foreground font-semibold hover:opacity-90 transition"
-          >
-            Test WhatsApp Connection
+            Book Now
           </Button>
         </form>
       </DialogContent>

@@ -45,34 +45,89 @@ export function BookingModal({ turf, onClose }: Props) {
     if (Notification.permission !== "granted") return;
     const reg = await navigator.serviceWorker.getRegistration();
     if (reg?.showNotification) {
-      reg.showNotification("TurfPro booking pending", {
+      reg.showNotification("Sports spitch booking pending", {
         body: `Your booking at ${turf.name} is pending confirmation.`,
         icon: "/icon-192.png",
       });
     } else {
-      new Notification("TurfPro booking pending", {
+      new Notification("Sports spitch booking pending", {
         body: `Your booking at ${turf.name} is pending confirmation.`,
         icon: "/icon-192.png",
       });
     }
   };
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    addBooking({
-      name,
-      phone,
-      turf: turf.name,
-      sport: turf.sport,
-      datetime,
-      players,
-      price: turf.price,
-      batch,
-      preferredLocation: preferredLocation || turf.location,
-      dealNotes,
-    });
-    setDone(true);
-    notify();
+    
+    // Validate required fields
+    if (!name || !phone || !datetime) {
+      alert("Please fill in all required fields (name, phone, and date/time)");
+      return;
+    }
+
+    // Validate phone number
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(phone.replace(/\D/g, ''))) {
+      alert("Please enter a valid 10-digit phone number");
+      return;
+    }
+
+    // Validate datetime
+    const dateObj = new Date(datetime);
+    if (isNaN(dateObj.getTime())) {
+      alert("Please enter a valid date and time");
+      return;
+    }
+
+    try {
+      // Try to add booking via API if available, otherwise fall back to local store
+      try {
+        const response = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name,
+            phone,
+            game: turf.sport,
+            date: datetime.split('T')[0],
+            timeSlot: `${dateObj.getHours()}-${dateObj.getHours() + 1}`,
+            players: players.toString(),
+          }),
+        });
+
+        if (response.ok) {
+          console.log("Booking submitted via API successfully");
+        } else {
+          console.warn("API submission failed, using local store fallback");
+        }
+      } catch (apiError) {
+        console.warn("API not available, using local store:", apiError);
+      }
+
+      // Always save to local store as backup
+      addBooking({
+        name,
+        phone,
+        turf: turf.name,
+        sport: turf.sport,
+        datetime,
+        players,
+        price: turf.price,
+        batch,
+        preferredLocation: preferredLocation || turf.location,
+        dealNotes,
+      });
+      
+      console.log("Booking saved successfully");
+      setDone(true);
+      notify();
+    } catch (error) {
+      console.error("Error submitting booking:", error);
+      alert(`Error saving booking: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`);
+    }
   };
 
   return (
