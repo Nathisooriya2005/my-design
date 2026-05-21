@@ -32,7 +32,7 @@ function AboutPage() {
           <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-white drop-shadow-sm">About <span className="bg-gradient-to-r from-emerald-300 via-lime-200 to-teal-100 bg-clip-text text-transparent drop-shadow-sm">TurfPro</span></h1>
           <p className="text-white/90 mt-4 leading-relaxed drop-shadow-sm">
             TurfPro is Tamil Nadu's premier platform for booking sports turfs in real-time. We help
-            players discover and reserve cricket, football, badminton, kabaddi and karate venues
+            players discover and reserve cricket, badminton, kabaddi and karate venues
             across the state — with live slot availability and instant confirmation.
           </p>
           <p className="text-white/90 mt-4 leading-relaxed drop-shadow-sm">

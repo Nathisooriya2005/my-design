@@ -16,7 +16,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-10 pt-6 border-t border-border text-xs text-muted-foreground flex justify-between flex-wrap gap-2">
-          <div>© 2026 TurfPro. All rights reserved.</div>
+          <div>© 2026 Sports spitch . All rights reserved.</div>
           <div>Made for players, in Tamil Nadu.</div>
         </div>
       </div>
