@@ -88,8 +88,22 @@ export const Route = createFileRoute("/api/bookings")({
           else if (hour >= 21 || hour < 6) batch = "night";
 
           // Create booking object with proper date handling
-          const bookingDateTime = new Date(body.date);
-          bookingDateTime.setHours(parseInt(timeSlotParts[0]), 0, 0, 0);
+          // Use ISO date format to avoid timezone issues
+          const bookingDate = new Date(body.date + 'T00:00:00.000Z');
+          const bookingDateTime = new Date(bookingDate);
+          bookingDateTime.setUTCHours(hour, 0, 0, 0);
+          
+          // Validate the created date
+          if (isNaN(bookingDateTime.getTime())) {
+            console.error("[API] Invalid booking datetime created");
+            return new Response(
+              JSON.stringify({ 
+                error: "Invalid date or time",
+                details: "The selected date and time combination is invalid"
+              }), 
+              { status: 400, headers: { "Content-Type": "application/json" } }
+            );
+          }
           
           const booking: Booking = {
             id: `bk_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
