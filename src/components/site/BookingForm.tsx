@@ -104,25 +104,28 @@ export function BookingForm() {
           : "morning"
       );
       
-      // Save to local store FIRST (synchronously) to ensure it appears in My Bookings
-      try {
-        addBooking({
-          name: formData.name,
-          phone: formData.phone,
-          turf: formData.game,
-          sport: formData.game,
-          datetime: new Date(`${formData.date}T${formData.timeSlot.split('-')[0]}:00:00`).toISOString(),
-          players: parseInt(formData.players),
-          price: 500,
-          batch: validBatch,
-          preferredLocation: "Chennimalai",
-          dealNotes: `Time slot: ${formData.timeSlot}`,
-        });
-        console.log("Booking saved to local store successfully");
-      } catch (storeError) {
-        console.error("Error saving to local store:", storeError);
-        alert("Warning: Booking submitted but may not appear in My Bookings page due to local storage issue.");
-        // Continue anyway since API call succeeded
+      // Only save to local store if we're in a browser environment (not SSR)
+      if (typeof window !== "undefined") {
+        try {
+          addBooking({
+            name: formData.name,
+            phone: formData.phone,
+            turf: formData.game,
+            sport: formData.game,
+            datetime: new Date(`${formData.date}T${formData.timeSlot.split('-')[0]}:00:00`).toISOString(),
+            players: parseInt(formData.players),
+            price: 500,
+            batch: validBatch,
+            preferredLocation: "Chennimalai",
+            dealNotes: `Time slot: ${formData.timeSlot}`,
+          });
+          console.log("Booking saved to local store successfully");
+        } catch (storeError) {
+          console.error("Error saving to local store:", storeError);
+          // Silent fail on local storage issues - booking is still submitted via API
+        }
+      } else {
+        console.log("SSR environment - skipping local store save, booking saved via API only");
       }
 
       // Send WhatsApp message
