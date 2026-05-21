@@ -43,7 +43,7 @@ function BookingsPage() {
               <div key={booking.id} className="glass-card rounded-3xl p-5 border border-border">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <h2 className="text-lg font-semibold">{booking.game || booking.turf}</h2>
+                    <h2 className="text-lg font-semibold">{booking.sport || booking.turf}</h2>
                     <div className="text-sm text-muted-foreground mt-1">{booking.sport} · {booking.batch} batch</div>
                     <div className="text-sm text-muted-foreground mt-1">Players: {booking.players}</div>
                     {booking.dealNotes && <div className="text-sm text-muted-foreground mt-1">Time slot: {booking.dealNotes.replace('Time slot: ', '')}</div>}
@@ -65,7 +65,7 @@ function BookingsPage() {
                       onClick={() => {
                         const message = `Booking Details:
 ID: ${booking.id}
-Game: ${booking.game || booking.sport}
+Game: ${booking.sport}
 Date: ${formatDT(booking.datetime)}
 Players: ${booking.players}
 Phone: ${booking.phone}

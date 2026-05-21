@@ -29,10 +29,10 @@ function TurfsPage() {
             <Link to="/bookings" className="px-4 py-3 rounded-xl glass-card hover:neon-border transition font-medium">
               My bookings
             </Link>
-            <Link to="/events" className="px-4 py-3 rounded-xl glass-card hover:neon-border transition font-medium">
+            <Link to="/turfs" className="px-4 py-3 rounded-xl glass-card hover:neon-border transition font-medium">
               Find a co-player
             </Link>
-            <Link to="/events" className="px-4 py-3 rounded-xl glass-card hover:neon-border transition font-medium">
+            <Link to="/turfs" className="px-4 py-3 rounded-xl glass-card hover:neon-border transition font-medium">
               Join nearby events
             </Link>
           </div>

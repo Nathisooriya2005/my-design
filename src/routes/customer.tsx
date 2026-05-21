@@ -25,7 +25,7 @@ function CustomerPortal() {
             <p className="mt-4 text-sm text-foreground">Use the portal below to reach the customer-facing booking experience.</p>
             <div className="mt-6 grid gap-3">
               <Link to="/turfs" className="block rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground text-center">Browse turfs</Link>
-              <Link to="/events" className="block rounded-2xl border border-border px-4 py-3 text-sm text-foreground text-center">Find co-players</Link>
+              <Link to="/turfs" className="block rounded-2xl border border-border px-4 py-3 text-sm text-foreground text-center">Find co-players</Link>
               <Link to="/bookings" className="block rounded-2xl border border-border px-4 py-3 text-sm text-foreground text-center">My bookings</Link>
             </div>
           </div>
