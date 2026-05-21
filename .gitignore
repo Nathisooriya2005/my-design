@@ -63,3 +63,7 @@ Thumbs.db
 
 # Lovable / local tooling
 .lovable/
+
+# Extra project folders
+sports-pitch/
+turf/

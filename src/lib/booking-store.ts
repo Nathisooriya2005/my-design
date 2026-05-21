@@ -4,7 +4,7 @@ import { useSyncExternalStore } from "react";
 
 export type BookingStatus = "pending" | "booked" | "waiting" | "canceled";
 export type TurfAvailability = "available" | "pending" | "unavailable";
-export type TimeBatch = "morning" | "evening" | "night";
+export type TimeBatch = "morning" | "afternoon" | "evening" | "night";
 
 export interface Booking {
   id: string;

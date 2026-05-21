@@ -23,7 +23,6 @@ export function Sports() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
             <div className="absolute inset-0 flex flex-col justify-end p-5 text-white">
               <div className="font-bold text-xl sm:text-2xl">{s.name}</div>
-              <div className="text-sm opacity-90 mt-1">{s.count}</div>
             </div>
           </button>
         ))}

@@ -1,6 +1,6 @@
 import heroImg from "@/assets/hero-turf.jpg";
-import { Calendar, MapPin, Search } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
+import { BookingForm } from "@/components/site/BookingForm";
 
 export function Hero() {
   const navigate = useNavigate();
@@ -24,24 +24,9 @@ export function Hero() {
             instant confirmation, zero hassle.
           </p>
 
-          <form
-            onSubmit={(e) => { e.preventDefault(); navigate({ to: "/turfs" }); }}
-            className="mt-10 glass-card rounded-2xl p-2 sm:p-3 flex flex-col sm:flex-row gap-2 max-w-2xl"
-          >
-            <div className="flex items-center gap-2 px-3 flex-1 min-w-0">
-              <MapPin className="size-4 text-primary-glow shrink-0" />
-              <input placeholder="Chennimalai" className="bg-transparent outline-none text-sm w-full py-3 placeholder:text-muted-foreground" />
-            </div>
-            <div className="hidden sm:block w-px bg-border my-2" />
-            <div className="flex items-center gap-2 px-3 sm:flex-1">
-              <Calendar className="size-4 text-primary-glow shrink-0" />
-              <input type="datetime-local" className="bg-transparent outline-none text-sm w-full py-3 text-muted-foreground" />
-            </div>
-            <button type="submit" className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-primary to-primary-glow text-primary-foreground text-sm font-semibold shadow-[var(--shadow-glow)] hover:opacity-90 transition">
-              <Search className="size-4" />
-              Search
-            </button>
-          </form>
+          <div className="mt-10">
+            <BookingForm />
+          </div>
 
 
         </div>

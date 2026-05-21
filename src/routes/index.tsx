@@ -3,7 +3,6 @@ import { Navbar } from "@/components/site/Navbar";
 import { Hero } from "@/components/site/Hero";
 import { Sports } from "@/components/site/Sports";
 import { Testimonials } from "@/components/site/Testimonials";
-import { CTA } from "@/components/site/CTA";
 import { Footer } from "@/components/site/Footer";
 import { WhatsAppButton } from "@/components/site/WhatsAppButton";
 
@@ -34,7 +33,6 @@ function Index() {
         <Hero />
         <Sports />
         <Testimonials />
-        <CTA />
       </main>
       <Footer />
       <WhatsAppButton />

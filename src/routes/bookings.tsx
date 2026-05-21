@@ -19,7 +19,7 @@ function BookingsPage() {
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
         <div className="mb-6">
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">My bookings</h1>
-          <p className="text-muted-foreground mt-2">See your status, cancel bookings, and open venue locations on Google Maps.</p>
+          <p className="text-muted-foreground mt-2">See your booking status and send details to WhatsApp.</p>
         </div>
 
         {holiday.active && (
@@ -32,9 +32,9 @@ function BookingsPage() {
         {!hasBookings ? (
           <div className="mt-10 glass-card rounded-3xl p-10 text-center">
             <p className="text-lg font-semibold">No bookings yet.</p>
-            <p className="text-muted-foreground mt-2">Browse nearby venues to make your first reservation.</p>
-            <Link to="/turfs" className="inline-flex mt-5 px-5 py-3 rounded-xl bg-gradient-to-r from-primary to-primary-glow text-primary-foreground shadow-[var(--shadow-glow)]">
-              Browse turfs
+            <p className="text-muted-foreground mt-2">Use the Book Now button on the home page to make your first booking.</p>
+            <Link to="/" className="inline-flex mt-5 px-5 py-3 rounded-xl bg-gradient-to-r from-primary to-primary-glow text-primary-foreground shadow-[var(--shadow-glow)]">
+              Go to Home
             </Link>
           </div>
         ) : (
@@ -43,11 +43,12 @@ function BookingsPage() {
               <div key={booking.id} className="glass-card rounded-3xl p-5 border border-border">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <h2 className="text-lg font-semibold">{booking.turf}</h2>
+                    <h2 className="text-lg font-semibold">{booking.game || booking.turf}</h2>
                     <div className="text-sm text-muted-foreground mt-1">{booking.sport} · {booking.batch} batch</div>
-                    <div className="text-sm text-muted-foreground mt-1">Preferred location: {booking.preferredLocation || booking.turf}</div>
-                    {booking.dealNotes && <div className="text-sm text-muted-foreground mt-1">Request: {booking.dealNotes}</div>}
+                    <div className="text-sm text-muted-foreground mt-1">Players: {booking.players}</div>
+                    {booking.dealNotes && <div className="text-sm text-muted-foreground mt-1">Time slot: {booking.dealNotes.replace('Time slot: ', '')}</div>}
                     <div className="text-sm text-muted-foreground mt-1">Booked for: {formatDT(booking.datetime)}</div>
+                    <div className="text-sm text-muted-foreground mt-1">Phone: {booking.phone}</div>
                   </div>
                   <div className="flex flex-col gap-2 text-right">
                     <span className={`rounded-full px-3 py-1 text-xs uppercase tracking-wide ${statusStyle(booking.status)}`}>{booking.status}</span>
@@ -60,9 +61,22 @@ function BookingsPage() {
                     Booking ID: {booking.id}
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <a href={`https://www.google.com/maps/search/${encodeURIComponent(booking.turf)}`} target="_blank" rel="noreferrer" className="text-sm rounded-xl border border-border px-4 py-2 hover:border-primary hover:text-primary transition">
-                      Open Google Maps
-                    </a>
+                    <button
+                      onClick={() => {
+                        const message = `Booking Details:
+ID: ${booking.id}
+Game: ${booking.game || booking.sport}
+Date: ${formatDT(booking.datetime)}
+Players: ${booking.players}
+Phone: ${booking.phone}
+Status: ${booking.status}`;
+                        const whatsappUrl = `https://wa.me/918883921424?text=${encodeURIComponent(message)}`;
+                        window.open(whatsappUrl, "_blank");
+                      }}
+                      className="text-sm rounded-xl border border-border px-4 py-2 hover:border-primary hover:text-primary transition"
+                    >
+                      Send to WhatsApp
+                    </button>
                     <button
                       onClick={() => updateBookingStatus(booking.id, "canceled")}
                       disabled={booking.status === "canceled"}
