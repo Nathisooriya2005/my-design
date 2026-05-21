@@ -5,7 +5,7 @@ import { useStore, updateBookingStatus } from "@/lib/booking-store";
 import { MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/bookings")({
-  head: () => ({ meta: [{ title: "My bookings — TurfPro" }, { name: "description", content: "Check your booking status and cancel if needed." }] }),
+  head: () => ({ meta: [{ title: "My bookings — Sports spitch" }, { name: "description", content: "Check your booking status and cancel if needed." }] }),
   component: BookingsPage,
 });
 

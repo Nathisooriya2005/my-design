@@ -81,13 +81,19 @@ export function BookingForm() {
         // Show specific error message from API
         const errorMessage = errorData.details || errorData.error || "Failed to submit booking";
         alert(`Booking Error: ${errorMessage}`);
+        
+        // Re-enable submit button on error
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = "Book Now";
+        }
         return;
       }
 
       const result = await response.json();
       console.log("API Success:", result);
 
-      // Also save to local store for client-side functionality
+      // Calculate batch info for local store
       const batch = getBatch(formData.timeSlot);
       const displayBatch = batch.charAt(0).toUpperCase() + batch.slice(1);
       
@@ -98,6 +104,7 @@ export function BookingForm() {
           : "morning"
       );
       
+      // Save to local store FIRST (synchronously) to ensure it appears in My Bookings
       try {
         addBooking({
           name: formData.name,
@@ -111,9 +118,10 @@ export function BookingForm() {
           preferredLocation: "Chennimalai",
           dealNotes: `Time slot: ${formData.timeSlot}`,
         });
-        console.log("Booking also saved to local store");
+        console.log("Booking saved to local store successfully");
       } catch (storeError) {
-        console.warn("Failed to save to local store (non-critical):", storeError);
+        console.error("Error saving to local store:", storeError);
+        alert("Warning: Booking submitted but may not appear in My Bookings page due to local storage issue.");
         // Continue anyway since API call succeeded
       }
 
@@ -139,6 +147,17 @@ Booking ID: ${result.booking?.id || 'Pending'}`;
       // Mobile detection and direct redirect for better mobile support
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       
+      // Close dialog and reset form for both mobile and desktop
+      setOpen(false);
+      setFormData({
+        name: "",
+        phone: "",
+        game: "",
+        date: "",
+        timeSlot: "",
+        players: ""
+      });
+      
       if (isMobile) {
         // For mobile devices, use direct location change to avoid popup blockers
         console.log("Mobile device detected, using direct redirect");
@@ -157,32 +176,22 @@ Booking ID: ${result.booking?.id || 'Pending'}`;
           console.error("Error opening WhatsApp:", error);
           window.location.href = whatsappUrl;
         }
-      }
-      
-      // Show success message (only for desktop, as mobile redirects)
-      if (!isMobile) {
-        alert("Booking submitted successfully! WhatsApp should open shortly.");
-      }
-      
-      // Close dialog and reset form (only for desktop)
-      if (!isMobile) {
-        setOpen(false);
-        setFormData({
-          name: "",
-          phone: "",
-          game: "",
-          date: "",
-          timeSlot: "",
-          players: ""
-        });
+        // Show success message only for desktop
+        alert("Booking submitted successfully! WhatsApp should open shortly. You can view your booking in My Bookings page.");
       }
 
     } catch (error) {
       console.error("Network or parsing error:", error);
       alert("Network error: Unable to connect to server. Please check your internet connection and try again.");
-    } finally {
-      // Re-enable submit button
+      
+      // Re-enable submit button on error
       if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = "Book Now";
+      }
+    } finally {
+      // Re-enable submit button if not already done
+      if (submitButton && submitButton.disabled) {
         submitButton.disabled = false;
         submitButton.textContent = "Book Now";
       }
