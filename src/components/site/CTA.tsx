@@ -16,7 +16,7 @@ export function CTA() {
               Your next match is <span className="text-gradient">one tap away.</span>
             </h2>
             <p className="text-muted-foreground mt-4 max-w-md">
-              Push notifications for your favourite turfs, instant slot alerts, and offline access to your bookings.
+              Push notifications for your favourite turfs, instant slot alerts, and offline access to the app.
             </p>
             <div className="flex flex-wrap gap-3 mt-7">
               <InstallButton />

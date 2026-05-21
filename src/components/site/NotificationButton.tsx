@@ -20,7 +20,7 @@ export function NotificationButton() {
     setPermission(result);
 
     if (result === "granted") {
-      const message = "Sports spitch notifications enabled. You'll see booking alerts and updates.";
+      const message = "Sports spitch notifications enabled. You'll see alerts and updates.";
       if (navigator.serviceWorker) {
         const registration = await navigator.serviceWorker.getRegistration();
         if (registration?.showNotification) {
