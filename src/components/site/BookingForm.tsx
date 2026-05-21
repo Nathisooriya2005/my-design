@@ -104,10 +104,12 @@ export function BookingForm() {
           : "morning"
       );
       
-      // Only save to local store if we're in a browser environment (not SSR)
+      // Only save to local store if we're in a browser environment
+      console.log("Browser check:", typeof window !== "undefined");
       if (typeof window !== "undefined") {
         try {
-          addBooking({
+          console.log("Attempting to save to local store...");
+          const booking = addBooking({
             name: formData.name,
             phone: formData.phone,
             turf: formData.game,
@@ -119,7 +121,19 @@ export function BookingForm() {
             preferredLocation: "Chennimalai",
             dealNotes: `Time slot: ${formData.timeSlot}`,
           });
-          console.log("Booking saved to local store successfully");
+          console.log("Booking saved to local store successfully:", booking);
+          
+          // Verify the save by checking localStorage directly
+          const storedData = localStorage.getItem("turfpro:store:v1");
+          console.log("Current localStorage data:", storedData);
+          
+          // Force a storage event to notify other tabs
+          window.dispatchEvent(new StorageEvent('storage', {
+            key: 'turfpro:store:v1',
+            newValue: storedData,
+            oldValue: storedData,
+            url: window.location.href
+          }));
         } catch (storeError) {
           console.error("Error saving to local store:", storeError);
           // Silent fail on local storage issues - booking is still submitted via API
@@ -304,7 +318,7 @@ Booking ID: ${result.booking?.id || 'Pending'}`;
             />
           </div>
 
-          <Button type="submit" className="w-full bg-gradient-to-r from-primary to-primary-glow text-primary-foreground font-semibold shadow-[var(--shadow-glow)] hover:opacity-90 transition">
+          <Button type="submit" className="w-full bg-gradient-to-r from-primary to primary-glow text-primary-foreground font-semibold shadow-[var(--shadow-glow)] hover:opacity-90 transition">
             Book Now
           </Button>
         </form>

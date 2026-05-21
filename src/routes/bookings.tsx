@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { useStore, updateBookingStatus } from "@/lib/booking-store";
@@ -12,11 +13,36 @@ export const Route = createFileRoute("/bookings")({
 function BookingsPage() {
   const { bookings, holiday } = useStore();
   const hasBookings = bookings.length > 0;
+  const [, forceUpdate] = useState(0);
+
+  // Debug: log bookings to console
+  console.log("BookingsPage - Current bookings:", bookings);
+  console.log("BookingsPage - Number of bookings:", bookings.length);
+  console.log("BookingsPage - Component re-rendered");
+  
+  // Also check localStorage directly for debugging
+  if (typeof window !== "undefined") {
+    const localStorageData = localStorage.getItem("turfpro:store:v1");
+    console.log("BookingsPage - localStorage data:", localStorageData);
+  }
+
+  // Force a re-render when navigating to this page and periodically check for updates
+  useEffect(() => {
+    console.log("BookingsPage - useEffect triggered");
+    forceUpdate(prev => prev + 1);
+    
+    // Also check for updates every 2 seconds as a fallback
+    const interval = setInterval(() => {
+      forceUpdate(prev => prev + 1);
+    }, 2000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="min-h-screen">
       <Navbar />
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:8 py-10">
         <div className="mb-6">
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">My bookings</h1>
           <p className="text-muted-foreground mt-2">See your booking status and send details to WhatsApp.</p>
@@ -64,12 +90,12 @@ function BookingsPage() {
                     <button
                       onClick={() => {
                         const message = `Booking Details:
-ID: ${booking.id}
-Game: ${booking.sport}
-Date: ${formatDT(booking.datetime)}
-Players: ${booking.players}
-Phone: ${booking.phone}
-Status: ${booking.status}`;
+	ID: ${booking.id}
+	Game: ${booking.sport}
+	Date: ${formatDT(booking.datetime)}
+	Players: ${booking.players}
+	Phone: ${booking.phone}
+	Status: ${booking.status}`;
                         const whatsappUrl = `https://wa.me/918883921424?text=${encodeURIComponent(message)}`;
                         window.open(whatsappUrl, "_blank");
                       }}

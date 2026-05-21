@@ -61,12 +61,14 @@ const DEFAULT_STATE: State = {
 };
 
 let state: State = load();
+let stateVersion = 0; // Version counter to force change detection
 const listeners = new Set<() => void>();
 
 function load(): State {
   if (typeof window === "undefined") return DEFAULT_STATE;
   try {
     const raw = localStorage.getItem(KEY);
+    console.log("[booking-store] Loading state from localStorage:", raw);
     if (raw) {
       const parsed = JSON.parse(raw) as Partial<State>;
       return {
@@ -82,12 +84,20 @@ function load(): State {
 function persist() {
   if (typeof window === "undefined") return;
   localStorage.setItem(KEY, JSON.stringify(state));
+  console.log("[booking-store] State persisted to localStorage, bookings:", state.bookings.length);
 }
 
 function emit() {
+  stateVersion++; // Increment version to force change detection
   persist();
   console.log("[booking-store] emit called, listeners:", listeners.size);
-  listeners.forEach((l) => l());
+  console.log("[booking-store] current bookings count:", state.bookings.length);
+  console.log("[booking-store] state version:", stateVersion);
+  listeners.forEach((l) => {
+    console.log("[booking-store] Calling listener");
+    l();
+  });
+  console.log("[booking-store] All listeners called");
 }
 
 if (typeof window !== "undefined") {
@@ -95,6 +105,7 @@ if (typeof window !== "undefined") {
     if (e.key === KEY) {
       console.log("[booking-store] storage event detected, reloading state");
       state = load();
+      stateVersion++; // Increment version on storage change
       console.log("[booking-store] notifying listeners:", listeners.size);
       listeners.forEach((l) => l());
     }
@@ -102,17 +113,34 @@ if (typeof window !== "undefined") {
 }
 
 export function subscribe(cb: () => void) {
+  console.log("[booking-store] New subscriber added, total:", listeners.size + 1);
   listeners.add(cb);
-  return () => listeners.delete(cb);
+  return () => {
+    console.log("[booking-store] Subscriber removed, remaining:", listeners.size - 1);
+    listeners.delete(cb);
+  };
 }
-export function getSnapshot(): State { return state; }
+
+export function getSnapshot(): State { 
+  console.log("[booking-store] getSnapshot called, bookings:", state.bookings.length, "version:", stateVersion);
+  // Return a new object reference to ensure React detects changes
+  return { 
+    ...state, 
+    bookings: [...state.bookings],
+    turfs: [...state.turfs],
+    holiday: { ...state.holiday }
+  }; 
+}
+
 export function getServerSnapshot(): State { return DEFAULT_STATE; }
 
 export function useStore() {
+  console.log("[booking-store] useStore called");
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
 
 export function addBooking(b: Omit<Booking, "id" | "status" | "createdAt" | "called">) {
+  console.log("[booking-store] addBooking called with:", b);
   const booking: Booking = {
     ...b,
     id: `bk_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
@@ -123,8 +151,11 @@ export function addBooking(b: Omit<Booking, "id" | "status" | "createdAt" | "cal
     preferredLocation: b.preferredLocation ?? "",
     dealNotes: b.dealNotes ?? "",
   };
+  console.log("[booking-store] Creating booking:", booking);
   state = { ...state, bookings: [booking, ...state.bookings] };
+  console.log("[booking-store] Booking added, new state bookings count:", state.bookings.length);
   emit();
+  console.log("[booking-store] addBooking completed, returning:", booking);
   return booking;
 }
 
