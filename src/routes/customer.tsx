@@ -17,7 +17,7 @@ function CustomerPortal() {
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Customer Portal</h1>
             <p className="text-muted-foreground mt-3 max-w-2xl">
-              Access TurfPro customer features without admin controls. Browse turfs, manage your bookings, and join nearby events.
+              Access TurfPro customer features without admin controls. Browse turfs, and join nearby events.
             </p>
           </div>
           <div className="rounded-3xl border border-border p-6 glass-card">
@@ -26,7 +26,6 @@ function CustomerPortal() {
             <div className="mt-6 grid gap-3">
               <Link to="/turfs" className="block rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground text-center">Browse turfs</Link>
               <Link to="/turfs" className="block rounded-2xl border border-border px-4 py-3 text-sm text-foreground text-center">Find co-players</Link>
-              <Link to="/bookings" className="block rounded-2xl border border-border px-4 py-3 text-sm text-foreground text-center">My bookings</Link>
             </div>
           </div>
         </div>

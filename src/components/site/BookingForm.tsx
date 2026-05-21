@@ -194,7 +194,7 @@ Booking ID: ${result.booking?.id || 'Pending'}`;
           window.location.href = whatsappUrl;
         }
         // Show success message only for desktop
-        alert("Booking submitted successfully! WhatsApp should open shortly. You can view your booking in My Bookings page.");
+        alert("Booking submitted successfully! WhatsApp should open shortly.");
       }
 
     } catch (error) {

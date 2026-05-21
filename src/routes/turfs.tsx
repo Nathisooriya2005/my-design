@@ -26,9 +26,6 @@ function TurfsPage() {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <Link to="/bookings" className="px-4 py-3 rounded-xl glass-card hover:neon-border transition font-medium">
-              My bookings
-            </Link>
             <Link to="/turfs" className="px-4 py-3 rounded-xl glass-card hover:neon-border transition font-medium">
               Find a co-player
             </Link>
