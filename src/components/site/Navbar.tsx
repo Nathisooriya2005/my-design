@@ -1,7 +1,7 @@
 import logoImg from "@/assets/logo-brand.png";
 import { Link } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const links = [
   { to: "/", label: "Home" },
@@ -10,11 +10,21 @@ const links = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/60 border-b border-border">
+    <header className={`sticky top-0 z-50 backdrop-blur-xl transition-all duration-300 ${scrolled ? 'bg-background/90 border-b border-border' : 'bg-transparent border-none'}`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 group">
-          <img src={logoImg} alt="Sports Pitch" className="h-7 w-auto max-h-7 sm:h-8 sm:max-h-8 object-contain object-left" />
+          <img src={logoImg} alt="Sports Pitch" className="h-14 w-auto max-h-14 sm:h-16 sm:max-h-16 object-contain object-left" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">

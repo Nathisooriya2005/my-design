@@ -26,7 +26,7 @@ function AboutPage() {
               e.currentTarget.style.display = 'none';
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/15 to-background/90" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/15 to-transparent" />
         </div>
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16 relative">
           <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-white drop-shadow-sm">About <span className="bg-gradient-to-r from-emerald-300 via-lime-200 to-teal-100 bg-clip-text text-transparent drop-shadow-sm">TurfPro</span></h1>

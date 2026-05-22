@@ -8,7 +8,7 @@ export function Hero() {
     <section className="relative overflow-hidden">
       <div className="absolute inset-0">
         <img src={heroImg} alt="Sports turf" width={1920} height={1280} className="size-full object-cover brightness-[0.92] saturate-[1.15]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/15 to-background/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/15 to-transparent" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-32 sm:pt-28 sm:pb-40">
